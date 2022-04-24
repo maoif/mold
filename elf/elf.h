@@ -21,6 +21,7 @@ struct I386;
 struct ARM64;
 struct ARM32;
 struct RISCV64;
+struct LARCH64;
 
 template <typename E> struct ElfSym;
 template <typename E> struct ElfShdr;
@@ -148,6 +149,7 @@ static constexpr u32 EM_ARM = 40;
 static constexpr u32 EM_X86_64 = 62;
 static constexpr u32 EM_AARCH64 = 183;
 static constexpr u32 EM_RISCV = 243;
+static constexpr u32 EM_LARCH64 = 258;
 
 static constexpr u32 EI_CLASS = 4;
 static constexpr u32 EI_DATA = 5;
@@ -248,6 +250,13 @@ static constexpr u32 EF_RISCV_RVE = 8;
 static constexpr u32 EF_RISCV_TSO = 16;
 
 static constexpr u32 STO_RISCV_VARIANT_CC = 0x80;
+
+// add e_flags for LARCH64?
+/*
+static constexpr u32 EF_LARCH64_LP64S = 1;
+static constexpr u32 EF_LARCH64_LP64F = 2;
+static constexpr u32 EF_LARCH64_LP64D = 3;
+*/
 
 static constexpr u32 R_X86_64_NONE = 0;
 static constexpr u32 R_X86_64_64 = 1;
@@ -1033,6 +1042,118 @@ inline std::string rel_to_string<RISCV64>(u32 r_type) {
   return "unknown (" + std::to_string(r_type) + ")";
 }
 
+static constexpr u32 R_LARCH_NONE = 0;
+static constexpr u32 R_LARCH_32 = 1;
+static constexpr u32 R_LARCH_64 = 2;
+static constexpr u32 R_LARCH_RELATIVE = 3;
+static constexpr u32 R_LARCH_COPY = 4;
+static constexpr u32 R_LARCH_JUMP_SLOT = 5;
+static constexpr u32 R_LARCH_TLS_DTPMOD32 = 6;
+static constexpr u32 R_LARCH_TLS_DTPMOD64 = 7;
+static constexpr u32 R_LARCH_TLS_DTPREL32 = 8;
+static constexpr u32 R_LARCH_TLS_DTPREL64 = 9;
+static constexpr u32 R_LARCH_TLS_TPREL32 = 10;
+static constexpr u32 R_LARCH_TLS_TPREL64 = 11;
+static constexpr u32 R_LARCH_IRELATIVE = 12;
+static constexpr u32 R_LARCH_MARK_LA = 20;
+static constexpr u32 R_LARCH_MARK_PCREL = 21;
+static constexpr u32 R_LARCH_SOP_PUSH_PCREL = 22;
+static constexpr u32 R_LARCH_SOP_PUSH_ABSOLUTE = 23;
+static constexpr u32 R_LARCH_SOP_PUSH_DUP = 24;
+static constexpr u32 R_LARCH_SOP_PUSH_GPREL = 25;
+static constexpr u32 R_LARCH_SOP_PUSH_TLS_TPREL = 26;
+static constexpr u32 R_LARCH_SOP_PUSH_TLS_GOT = 27;
+static constexpr u32 R_LARCH_SOP_PUSH_TLS_GD = 28;
+static constexpr u32 R_LARCH_SOP_PUSH_PLT_PCREL = 29;
+static constexpr u32 R_LARCH_SOP_ASSERT = 30;
+static constexpr u32 R_LARCH_SOP_NOT = 31;
+static constexpr u32 R_LARCH_SOP_SUB = 32;
+static constexpr u32 R_LARCH_SOP_SL = 33;
+static constexpr u32 R_LARCH_SOP_SR = 34;
+static constexpr u32 R_LARCH_SOP_ADD = 35;
+static constexpr u32 R_LARCH_SOP_AND = 36;
+static constexpr u32 R_LARCH_SOP_IF_ELSE = 37;
+static constexpr u32 R_LARCH_SOP_POP_32_S_10_5 = 38;
+static constexpr u32 R_LARCH_SOP_POP_32_U_10_12 = 39;
+static constexpr u32 R_LARCH_SOP_POP_32_S_10_12 = 40;
+static constexpr u32 R_LARCH_SOP_POP_32_S_10_16 = 41;
+static constexpr u32 R_LARCH_SOP_POP_32_S_10_16_S2 = 42;
+static constexpr u32 R_LARCH_SOP_POP_32_S_5_20 = 43;
+static constexpr u32 R_LARCH_SOP_POP_32_S_0_5_10_16_S2 = 44;
+static constexpr u32 R_LARCH_SOP_POP_32_S_0_10_10_16_S2 = 45;
+static constexpr u32 R_LARCH_SOP_POP_32_U = 46;
+static constexpr u32 R_LARCH_ADD8 = 47;
+static constexpr u32 R_LARCH_ADD16 = 48;
+static constexpr u32 R_LARCH_ADD24 = 49;
+static constexpr u32 R_LARCH_ADD32 = 50;
+static constexpr u32 R_LARCH_ADD64 = 51;
+static constexpr u32 R_LARCH_SUB8 = 52;
+static constexpr u32 R_LARCH_SUB16 = 53;
+static constexpr u32 R_LARCH_SUB24 = 54;
+static constexpr u32 R_LARCH_SUB32 = 55;
+static constexpr u32 R_LARCH_SUB64 = 56;
+static constexpr u32 R_LARCH_GNU_VTINHERIT = 57;
+static constexpr u32 R_LARCH_GNU_VTENTRY = 58;
+
+template <>
+inline std::string rel_to_string<LARCH64>(u32 r_type) {
+  switch (r_type) {
+  case R_LARCH_NONE: return "R_LARCH_NONE";
+  case R_LARCH_32: return "R_LARCH_32";
+  case R_LARCH_64: return "R_LARCH_64";
+  case R_LARCH_RELATIVE: return "R_LARCH_RELATIVE";
+  case R_LARCH_COPY: return "R_LARCH_COPY";
+  case R_LARCH_JUMP_SLOT: return "R_LARCH_JUMP_SLOT";
+  case R_LARCH_TLS_DTPMOD32: return "R_LARCH_TLS_DTPMOD32";
+  case R_LARCH_TLS_DTPMOD64: return "R_LARCH_TLS_DTPMOD64";
+  case R_LARCH_TLS_DTPREL32: return "R_LARCH_TLS_DTPREL32";
+  case R_LARCH_TLS_DTPREL64: return "R_LARCH_TLS_DTPREL64";
+  case R_LARCH_TLS_TPREL32: return "R_LARCH_TLS_TPREL32";
+  case R_LARCH_TLS_TPREL64: return "R_LARCH_TLS_TPREL64";
+  case R_LARCH_IRELATIVE: return "R_LARCH_IRELATIVE";
+  case R_LARCH_MARK_LA: return "R_LARCH_MARK_LA";
+  case R_LARCH_MARK_PCREL: return "R_LARCH_MARK_PCREL";
+  case R_LARCH_SOP_PUSH_PCREL: return "R_LARCH_SOP_PUSH_PCREL";
+  case R_LARCH_SOP_PUSH_ABSOLUTE: return "R_LARCH_SOP_PUSH_ABSOLUTE";
+  case R_LARCH_SOP_PUSH_DUP: return "R_LARCH_SOP_PUSH_DUP";
+  case R_LARCH_SOP_PUSH_GPREL: return "R_LARCH_SOP_PUSH_GPREL";
+  case R_LARCH_SOP_PUSH_TLS_TPREL: return "R_LARCH_SOP_PUSH_TLS_TPREL";
+  case R_LARCH_SOP_PUSH_TLS_GOT: return "R_LARCH_SOP_PUSH_TLS_GOT";
+  case R_LARCH_SOP_PUSH_TLS_GD: return "R_LARCH_SOP_PUSH_TLS_GD";
+  case R_LARCH_SOP_PUSH_PLT_PCREL: return "R_LARCH_SOP_PUSH_PLT_PCREL";
+  case R_LARCH_SOP_ASSERT: return "R_LARCH_SOP_ASSERT";
+  case R_LARCH_SOP_NOT: return "R_LARCH_SOP_NOT";
+  case R_LARCH_SOP_SUB: return "R_LARCH_SOP_SUB";
+  case R_LARCH_SOP_SL: return "R_LARCH_SOP_SL";
+  case R_LARCH_SOP_SR: return "R_LARCH_SOP_SR";
+  case R_LARCH_SOP_ADD: return "R_LARCH_SOP_ADD";
+  case R_LARCH_SOP_AND: return "R_LARCH_SOP_AND";
+  case R_LARCH_SOP_IF_ELSE: return "R_LARCH_SOP_IF_ELSE";
+  case R_LARCH_SOP_POP_32_S_10_5: return "R_LARCH_SOP_POP_32_S_10_5";
+  case R_LARCH_SOP_POP_32_U_10_12: return "R_LARCH_SOP_POP_32_U_10_12";
+  case R_LARCH_SOP_POP_32_S_10_12: return "R_LARCH_SOP_POP_32_S_10_12";
+  case R_LARCH_SOP_POP_32_S_10_16: return "R_LARCH_SOP_POP_32_S_10_16";
+  case R_LARCH_SOP_POP_32_S_10_16_S2: return "R_LARCH_SOP_POP_32_S_10_16_S2";
+  case R_LARCH_SOP_POP_32_S_5_20: return "R_LARCH_SOP_POP_32_S_5_20";
+  case R_LARCH_SOP_POP_32_S_0_5_10_16_S2: return "R_LARCH_SOP_POP_32_S_0_5_10_16_S2";
+  case R_LARCH_SOP_POP_32_S_0_10_10_16_S2: return "R_LARCH_SOP_POP_32_S_0_10_10_16_S2";
+  case R_LARCH_SOP_POP_32_U: return "R_LARCH_SOP_POP_32_U";
+  case R_LARCH_ADD8: return "R_LARCH_ADD8";
+  case R_LARCH_ADD16: return "R_LARCH_ADD16";
+  case R_LARCH_ADD24: return "R_LARCH_ADD24";
+  case R_LARCH_ADD32: return "R_LARCH_ADD32";
+  case R_LARCH_ADD64: return "R_LARCH_ADD64";
+  case R_LARCH_SUB8: return "R_LARCH_SUB8";
+  case R_LARCH_SUB16: return "R_LARCH_SUB16";
+  case R_LARCH_SUB24: return "R_LARCH_SUB24";
+  case R_LARCH_SUB32: return "R_LARCH_SUB32";
+  case R_LARCH_SUB64: return "R_LARCH_SUB64";
+  case R_LARCH_GNU_VTINHERIT: return "R_LARCH_GNU_VTINHERIT";
+  case R_LARCH_GNU_VTENTRY: return "R_LARCH_GNU_VTENTRY";
+  }
+  return "unknown (" + std::to_string(r_type) + ")";
+}
+
 static constexpr u32 DW_EH_PE_absptr = 0;
 static constexpr u32 DW_EH_PE_omit = 0xff;
 static constexpr u32 DW_EH_PE_uleb128 = 0x01;
@@ -1487,5 +1608,35 @@ template <> struct ElfPhdr<RISCV64> : public Elf64Phdr {};
 template <> struct ElfRel<RISCV64> : public Elf64Rela {};
 template <> struct ElfDyn<RISCV64> : public Elf64Dyn {};
 template <> struct ElfChdr<RISCV64> : public Elf64Chdr {};
+
+struct LARCH64 {
+  using WordTy = u64;
+
+  static constexpr u32 R_NONE = R_LARCH_NONE;
+  static constexpr u32 R_COPY = R_LARCH_COPY;
+  static constexpr u32 R_GLOB_DAT = R_LARCH_64;
+  static constexpr u32 R_JUMP_SLOT = R_LARCH_JUMP_SLOT;
+  static constexpr u32 R_ABS = R_LARCH_64;
+  static constexpr u32 R_RELATIVE = R_LARCH_RELATIVE;
+  static constexpr u32 R_IRELATIVE = R_LARCH_IRELATIVE;
+  static constexpr u32 R_DTPOFF = R_LARCH_TLS_DTPREL64;
+  static constexpr u32 R_TPOFF = R_LARCH_TLS_TPREL64;
+  static constexpr u32 R_DTPMOD = R_LARCH_TLS_DTPMOD64;
+
+  static constexpr u32 word_size = 8;
+  static constexpr u32 page_size = 4096;
+  static constexpr u32 e_machine = EM_LARCH64;
+  static constexpr u32 pltgot_size = 16;
+  static constexpr bool is_rel = false;
+  static constexpr bool supports_tlsdesc = false;
+};
+
+template <> struct ElfSym<LARCH64> : public Elf64Sym {};
+template <> struct ElfShdr<LARCH64> : public Elf64Shdr {};
+template <> struct ElfEhdr<LARCH64> : public Elf64Ehdr {};
+template <> struct ElfPhdr<LARCH64> : public Elf64Phdr {};
+template <> struct ElfRel<LARCH64> : public Elf64Rela {};
+template <> struct ElfDyn<LARCH64> : public Elf64Dyn {};
+template <> struct ElfChdr<LARCH64> : public Elf64Chdr {};
 
 } // namespace mold::elf
