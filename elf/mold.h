@@ -53,7 +53,8 @@
   INSTANTIATE(I386);                            \
   INSTANTIATE(ARM64);                           \
   INSTANTIATE(ARM32);                           \
-  INSTANTIATE(RISCV64)
+  INSTANTIATE(RISCV64)                          \
+  INSTANTIATE(LARCH64)
 #endif
 
 namespace mold::elf {
